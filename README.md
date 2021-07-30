@@ -19,6 +19,6 @@ MVVM
 - Unit Test for API logic and View Models
 
 ## Requirements:
-iOS 14.4
-XCode 12.4
-Swift 5
+- iOS 14.4
+- XCode 12.4
+- Swift 5
