@@ -24,7 +24,7 @@ public extension DateFormatter {
     }()
     
     static func string(iso string: String) -> String {
-        let date = DateFormatter.iso8601Full.date(from: string)!
-        return  DateFormatter.dateOnly.string(from: date)
+        guard let date = DateFormatter.iso8601Full.date(from: string) else { return ""}
+        return DateFormatter.dateOnly.string(from: date)
     }
 }
