@@ -10,24 +10,56 @@ import XCTest
 
 class GithubRepoSearchTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    var srt: RepositoryAPIRequest?
+        
+    let repositoryList: [String: Any] = ["total_count":1,
+                        "incomplete_results":true,
+                        "items":[["id": 94404860,
+                                  "name": "testString",
+                                  "full_name": "as/a",
+                                  "description": "A graphical text editor",
+                                  "html_url": "https://github.com/as/a",
+                                  "updatedAt": "2021-05-21T14:15:20Z"]]]
+        
+    override func setUp() {
+        super.setUp()
+        srt = RepositoryAPIRequest()
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    override func tearDown() {
+        srt = nil
+        super.tearDown()
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    /*
+     // Test RepositoryList
+    */
+    func test_fetchRepositoryList() {
+        let promise = expectation(description: "Fetch Github Repositories")
+        srt?.fetchRepositories(with: "testString", request: RepositoryAPIRequest(), completion: { result in
+            switch result {
+            // 3
+            case .failure(let error):
+                XCTFail("Error: \(error)")
+                return
+            // 4
+            case .success( _):
+                promise.fulfill()
+            }
+        })
+        wait(for: [promise], timeout: 5)
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    /*
+     // Test: For serializing mocked JSON object into RepositoryData
+     */
+    func test_serializeRepositoryData() {
+        guard let data = try? JSONSerialization.data(withJSONObject: repositoryList, options: .prettyPrinted), let repoInfo = try? JSONDecoder().decode(RepositoryData.self, from: data) else {
+            XCTFail()
+            return
         }
+        
+        XCTAssert(repoInfo.items?.count == 1)
+        XCTAssert(repoInfo.totalCount == 1)
     }
-
 }
